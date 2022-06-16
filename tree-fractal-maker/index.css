@@ -1,0 +1,19 @@
+.tree-control {
+    width: 25px; 
+    height: 25px; 
+    position: absolute; 
+    background-color: #ff000044;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: background-color 0.5s;
+}
+
+.tree-control:hover {
+    background-color: #ff0000;
+}
+
+#canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
