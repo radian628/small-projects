@@ -1,4 +1,5 @@
 export class Draggable {
+    // make an element draggable, and set its initial position
     constructor (elem, x, y) {
         this.elem = elem;
         this.isMouseDown = false;
@@ -25,17 +26,20 @@ export class Draggable {
         this.setPos(x, y);
     }
 
+    // set draggable element position
     setPos(x, y) {
         this.x = x;
         this.y = y;
         this.syncPos();
     }
 
+    // internal function (make element position match set position)
     syncPos() {
         this.elem.style.left = `${this.x}px`;
         this.elem.style.top = `${this.y}px`;
     }
 
+    // remove element draggability
     remove() {
         this.elem.removeEventListener("mousedown", this.mousedownHandler);
         document.removeEventListener("mousemove", this.mousemoveHandler);

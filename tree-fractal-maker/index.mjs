@@ -40,11 +40,18 @@ let treeControl3Dragger = new Draggable(
     286, 350
 );
 
+// previous screen width/height
 let prevWidth = 512;
 let prevHeight = 512;
+
+// called upon screen resize
 function resizeHandler() {
+    
+    // change starting point of tree
     treeSettings.startX = window.innerWidth / 2;
     treeSettings.startY = window.innerHeight;
+
+    // move control points so tree stays the same
     treeControl1Dragger.setPos(
         window.innerWidth/2 - (prevWidth/2 - treeControl1Dragger.x),
         window.innerHeight - (prevHeight - treeControl1Dragger.y)
@@ -57,14 +64,20 @@ function resizeHandler() {
         window.innerWidth/2 - (prevWidth/2 - treeControl3Dragger.x),
         window.innerHeight - (prevHeight - treeControl3Dragger.y)
     );
+
+    // update previous width/height
     prevWidth = window.innerWidth;
     prevHeight = window.innerHeight;
+
+    // update canvas width/height
     canvas.width = prevWidth;
     canvas.height = prevHeight;
 }
 
+// deal with initial screen size
 resizeHandler();
 
+// handle subsequent screen resizes
 window.addEventListener("resize", resizeHandler);
 
 // draws tree
