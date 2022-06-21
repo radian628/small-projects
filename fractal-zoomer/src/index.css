@@ -11,3 +11,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#settings {
+  width: 10%;
+  height: 100%;
+  background: #00000088;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#settings label {
+  color: white;
+}
+
+#settings input {
+  width: 80%;
+  background: black;
+  color: white;
+  border: 1px solid white;
+  border-radius: 8px;
+}

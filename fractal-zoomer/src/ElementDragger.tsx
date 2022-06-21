@@ -58,12 +58,22 @@ export function ElementDragger(props: ElementDraggerProps) {
     };
 
     const wheel: WheelEventHandler = e => {
+        e.preventDefault();
+
         let worldWidth = props.x2 - props.x1;
         let worldHeight = props.y2 - props.y1;
         let centerX = (props.x2 + props.x1) / 2;
         let centerY = (props.y2 + props.y1) / 2;
 
-        let scaleFactor = 1 + Math.sign(e.deltaY) * 0.04;
+        let scaleFactor = e.deltaY * 0.004;
+
+        if (e.deltaMode == 0x01) {
+            scaleFactor /= 10;
+        }
+        if (e.deltaMode == 0x02) {
+            scaleFactor /= window.innerHeight;
+        }
+        scaleFactor += 1;
 
         props.setX1(centerX - worldWidth / 2 * scaleFactor);
         props.setY1(centerY - worldHeight / 2 * scaleFactor);

@@ -3,6 +3,7 @@ import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import VERT_SHADER from "./vertex.vert?raw";
 import MANDELBROT_FRAG_SHADER from "./mandelbrot.frag?raw";
 import JULIA_FRAG_SHADER from "./julia.frag?raw";
+import { JuliaSettings, MandelbrotSettings } from './Settings';
 
 export enum FractalType {
     MANDELBROT,
@@ -10,12 +11,13 @@ export enum FractalType {
 };
 
 type FractalCanvasProps = {
-    fractalType: FractalType,
     x1: number,
     y1: number,
     x2: number,
-    y2: number
-};
+    y2: number,
+    settings: MandelbrotSettings
+            | JuliaSettings
+}
 
 let fileCache = new Map<string, string>();
 async function fetchText(filename: string) {
@@ -83,10 +85,14 @@ async function constructShaderProgramFromStrings(gl: WebGLCtx, vertexShaderSourc
 
 
 
-const fragShaderSources = {
+const fragShaderSources: { [key in FractalType]: string } = {
     [FractalType.MANDELBROT]: MANDELBROT_FRAG_SHADER,
     [FractalType.JULIA]: JULIA_FRAG_SHADER
 };
+
+
+
+
 
 export function FractalCanvas(props: FractalCanvasProps) {
     // handle resize
@@ -115,10 +121,10 @@ export function FractalCanvas(props: FractalCanvasProps) {
             const gl = canvasRef.current.getContext("webgl2");
             if (!gl) return;
             const shaderProgram = await constructShaderProgramFromStrings(gl, VERT_SHADER,
-                (fragShaderSources[props.fractalType] as unknown) as string);
+                (fragShaderSources[props.settings.fractalType] as unknown) as string);
             setShaderProgram(shaderProgram);
         })();
-    }, [props.fractalType]);
+    }, [props.settings.fractalType]);
 
 
 
@@ -168,6 +174,30 @@ export function FractalCanvas(props: FractalCanvasProps) {
 
         gl.uniform2fv(gl.getUniformLocation(shaderProgram, "corner1"), [props.x1, props.y1]);
         gl.uniform2fv(gl.getUniformLocation(shaderProgram, "corner2"), [props.x2, props.y2]);
+
+        gl.uniform2fv(gl.getUniformLocation(shaderProgram, "winSize"), [canvasElem.width, canvasElem.height]);
+
+        gl.uniform3fv(gl.getUniformLocation(shaderProgram, "gradient"), [
+            0, 0, 0,
+            255, 87, 25,
+            255, 233, 133,
+            153, 255, 253,
+            255, 255, 255,
+        ].map(e => e / 255), 0, 15);
+
+        gl.uniform1fv(gl.getUniformLocation(shaderProgram, "gradientFactor"), [
+            0, 0.1, 0.2, 0.3, 1.0
+        ], 0, 5);
+
+
+        gl.uniform1ui(gl.getUniformLocation(shaderProgram, "iterations"), props.settings.iterations);
+
+        if (props.settings.fractalType == FractalType.JULIA) {
+            gl.uniform2fv(gl.getUniformLocation(shaderProgram, "c"), [
+                props.settings.cReal,
+                props.settings.cImaginary
+            ]);
+        }
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     });
