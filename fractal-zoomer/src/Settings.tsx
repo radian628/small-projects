@@ -32,6 +32,7 @@ export function MandelbrotSettingsMenu(props: FractalPropsType<MandelbrotSetting
     return (
         <React.Fragment>
             <NumberInput 
+                options={{ stepSize: 1, min: 0, max: Infinity }}
                 data={props.settings.iterations} 
                 setData={setter("iterations")} 
                 caption="Iterations"></NumberInput>
@@ -53,9 +54,15 @@ export function JuliaSettingsMenu(props: FractalPropsType<JuliaSettings>) {
     const setter = getObjSetter((settings) => props.setSettings(settings), props.settings);
     return (
         <React.Fragment>
-            <NumberInput data={props.settings.iterations} setData={setter("iterations")} caption="Iterations"></NumberInput>
-            <NumberInput data={props.settings.cReal} setData={setter("cReal")} caption="Real part of C"></NumberInput>
-            <NumberInput data={props.settings.cImaginary} setData={setter("cImaginary")} caption="Imaginary part of C"></NumberInput>
+            <NumberInput 
+                options={{ stepSize: 1, min: 0, max: Infinity }} 
+                data={props.settings.iterations} setData={setter("iterations")} caption="Iterations"></NumberInput>
+            <NumberInput 
+                options={{ stepSize: 0.001, min: -Infinity, max: Infinity }} 
+                data={props.settings.cReal} setData={setter("cReal")} caption="Real part of C"></NumberInput>
+            <NumberInput 
+                options={{ stepSize: 0.001, min: -Infinity, max: Infinity }} 
+                data={props.settings.cImaginary} setData={setter("cImaginary")} caption="Imaginary part of C"></NumberInput>
         </React.Fragment>
     );
 }
