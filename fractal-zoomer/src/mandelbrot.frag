@@ -15,6 +15,8 @@ uniform float gradientFactor[5];
 
 uniform uint iterations;
 
+uniform float numberOfSamples;
+
 vec3 getColor(float factor) {
     float factor2 = factor;
     uint index = 0u;
@@ -36,7 +38,7 @@ float rand(vec2 co){
 
 void main(void) {
     vec3 color = vec3(0.0);
-    for (float sampleCount = 0.0; sampleCount < 1.0; sampleCount++) {
+    for (float sampleCount = 0.0; sampleCount < numberOfSamples; sampleCount++) {
         vec2 z = vec2(0.0);
         vec2 c = position + 
             vec2(
@@ -52,5 +54,5 @@ void main(void) {
             }
         }
     }
-    pixelColor = vec4(color / 1.0, 1.0);
+    pixelColor = vec4(color / numberOfSamples, 1.0);
 }

@@ -13,7 +13,8 @@ function App() {
 
   const [settings, setSettings] = useState<FractalSettings>({
     fractalType: FractalType.MANDELBROT,
-    iterations: 128
+    iterations: 128,
+    sampleCount: 1
   });
 
   return (

@@ -3,11 +3,13 @@ import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import VERT_SHADER from "./vertex.vert?raw";
 import MANDELBROT_FRAG_SHADER from "./mandelbrot.frag?raw";
 import JULIA_FRAG_SHADER from "./julia.frag?raw";
-import { JuliaSettings, MandelbrotSettings } from './Settings';
+import DUCKS_FRAG_SHADER from "./ducks.frag?raw";
+import { FractalSettings, JuliaSettings, MandelbrotSettings } from './Settings';
 
 export enum FractalType {
     MANDELBROT,
-    JULIA
+    JULIA,
+    DUCKS
 };
 
 type FractalCanvasProps = {
@@ -15,8 +17,7 @@ type FractalCanvasProps = {
     y1: number,
     x2: number,
     y2: number,
-    settings: MandelbrotSettings
-            | JuliaSettings
+    settings: FractalSettings
 }
 
 let fileCache = new Map<string, string>();
@@ -87,7 +88,8 @@ async function constructShaderProgramFromStrings(gl: WebGLCtx, vertexShaderSourc
 
 const fragShaderSources: { [key in FractalType]: string } = {
     [FractalType.MANDELBROT]: MANDELBROT_FRAG_SHADER,
-    [FractalType.JULIA]: JULIA_FRAG_SHADER
+    [FractalType.JULIA]: JULIA_FRAG_SHADER,
+    [FractalType.DUCKS]: DUCKS_FRAG_SHADER
 };
 
 
@@ -190,12 +192,19 @@ export function FractalCanvas(props: FractalCanvasProps) {
         ], 0, 5);
 
 
+        gl.uniform1fv(gl.getUniformLocation(shaderProgram, "numberOfSamples"), [props.settings.sampleCount]);
+
         gl.uniform1ui(gl.getUniformLocation(shaderProgram, "iterations"), props.settings.iterations);
 
         if (props.settings.fractalType == FractalType.JULIA) {
             gl.uniform2fv(gl.getUniformLocation(shaderProgram, "c"), [
                 props.settings.cReal,
                 props.settings.cImaginary
+            ]);
+        } else if (props.settings.fractalType == FractalType.DUCKS) {
+            gl.uniform2fv(gl.getUniformLocation(shaderProgram, "c"), [
+                props.settings.pReal,
+                props.settings.pImaginary
             ]);
         }
 
