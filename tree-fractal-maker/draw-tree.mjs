@@ -27,7 +27,7 @@ export function drawTree(settings) {
             x: finalPosX,
             y: finalPosY,
             angle: branchSettings.angle + settings.angle1
-                * ((1 - branchSettings.depthRemaining % 2) * 2 - 1),
+                * (settings.reflect ? ((1 - branchSettings.depthRemaining % 2) * 2 - 1) : 1),
             length: branchSettings.length * settings.mag1,
             depthRemaining: branchSettings.depthRemaining - 1
         });
@@ -37,7 +37,7 @@ export function drawTree(settings) {
             x: finalPosX,
             y: finalPosY,
             angle: branchSettings.angle + settings.angle2
-                * ((1 - branchSettings.depthRemaining % 2) * 2 - 1),
+                * (settings.reflect ? ((1 - branchSettings.depthRemaining % 2) * 2 - 1) : 1),
             length: branchSettings.length * settings.mag2,
             depthRemaining: branchSettings.depthRemaining - 1
         });

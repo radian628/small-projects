@@ -4,7 +4,9 @@ import VERT_SHADER from "./vertex.vert?raw";
 import MANDELBROT_FRAG_SHADER from "./mandelbrot.frag?raw";
 import JULIA_FRAG_SHADER from "./julia.frag?raw";
 import DUCKS_FRAG_SHADER from "./ducks.frag?raw";
+import FRACTAL_LIB_SHADER from "./fractallib.glsl?raw";
 import { FractalSettings, JuliaSettings, MandelbrotSettings } from './Settings';
+import { Gradient } from './GradientInput';
 
 export enum FractalType {
     MANDELBROT,
@@ -17,7 +19,8 @@ type FractalCanvasProps = {
     y1: number,
     x2: number,
     y2: number,
-    settings: FractalSettings
+    settings: FractalSettings,
+    gradient: Gradient
 }
 
 let fileCache = new Map<string, string>();
@@ -123,7 +126,8 @@ export function FractalCanvas(props: FractalCanvasProps) {
             const gl = canvasRef.current.getContext("webgl2");
             if (!gl) return;
             const shaderProgram = await constructShaderProgramFromStrings(gl, VERT_SHADER,
-                (fragShaderSources[props.settings.fractalType] as unknown) as string);
+                ((fragShaderSources[props.settings.fractalType] as unknown) as string)
+                .replace(/\/\/\$FRACTAL_LIB/g, FRACTAL_LIB_SHADER));
             setShaderProgram(shaderProgram);
         })();
     }, [props.settings.fractalType]);
@@ -179,17 +183,17 @@ export function FractalCanvas(props: FractalCanvasProps) {
 
         gl.uniform2fv(gl.getUniformLocation(shaderProgram, "winSize"), [canvasElem.width, canvasElem.height]);
 
-        gl.uniform3fv(gl.getUniformLocation(shaderProgram, "gradient"), [
-            0, 0, 0,
-            255, 87, 25,
-            255, 233, 133,
-            153, 255, 253,
-            255, 255, 255,
-        ].map(e => e / 255), 0, 15);
+        gl.uniform3fv(gl.getUniformLocation(shaderProgram, "gradient"), 
+            props.gradient.reduce<number[]>((prev, curr) => prev.concat(curr.color), [])
+                .map(n => n / 255)
+        , 0, 15);
 
-        gl.uniform1fv(gl.getUniformLocation(shaderProgram, "gradientFactor"), [
-            0, 0.1, 0.2, 0.3, 1.0
-        ], 0, 5);
+        console.log(props.gradient.reduce<number[]>((prev, curr) => prev.concat(curr.color), []), props.gradient.map(col => col.factor));
+
+        gl.uniform1fv(gl.getUniformLocation(shaderProgram, "gradientFactor"), 
+            //0, 0.1, 0.2, 0.3, 1.0
+            props.gradient.map(col => col.factor)
+        , 0, 5);
 
 
         gl.uniform1fv(gl.getUniformLocation(shaderProgram, "numberOfSamples"), [props.settings.sampleCount]);

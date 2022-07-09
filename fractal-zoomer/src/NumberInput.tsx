@@ -7,21 +7,26 @@ type NumberInputProps = {
     options: {
         stepSize: number,
         min: number,
-        max: number
+        max: number,
+        sensitivity: number
     }
 }
 
 export function NumberInput(props: NumberInputProps) {
     let [isMouseDown, setIsMouseDown] = useState(false);
+    let [prevNumber, setPrevNumber] = useState(0);
+    let [deltaX, setDeltaX] = useState(0);
 
-    const input = <input 
+    const input = <input className="number-input"
         onMouseDown={e => {
             e.currentTarget.requestPointerLock();
             setIsMouseDown(true);
+            setDeltaX(0);
+            setPrevNumber(props.data);
         }} 
         onChange={e => {
             setNumber(Number(e.currentTarget.value));
-        }} type="number" value={props.data}></input>;
+        }} type="number" value={((props.data.toPrecision(14) as unknown) as number) / 1}></input>;
 
     useEffect(() => {
         let mouseUpListener = (e: MouseEvent) => {
@@ -31,7 +36,9 @@ export function NumberInput(props: NumberInputProps) {
         
         let mouseMoveListener = (e: MouseEvent) => {
             if (isMouseDown) {
-                setNumber(props.data + props.options.stepSize * e.movementX);
+                setDeltaX(deltaX + e.movementX * props.options.sensitivity);
+                const num = Math.floor((prevNumber + deltaX) / props.options.stepSize) * props.options.stepSize;
+                setNumber(num);
             }
         }
 
@@ -54,40 +61,4 @@ export function NumberInput(props: NumberInputProps) {
             {input}
         </React.Fragment>
     );
-}
-
-type SelectInputProps<ValueType> = {
-    caption: string,
-    setData: (x: ValueType) => void,
-    data: ValueType,
-    values: ValueType[],
-    valueNames: string[],
-    isEqual?: (a: ValueType, b: ValueType) => boolean
-}
-
-function indexOf<T>(arr: T[], elemToFind: T, isEqual?: (a: T, b: T) => boolean) {
-    if (!isEqual) return arr.indexOf(elemToFind);
-    let index = 0;
-    for (let item of arr) {
-        if (isEqual(item, elemToFind)) return index;
-        index++;
-    }
-    return -1;
-}
-
-export function SelectInput<ValueType>(props: SelectInputProps<ValueType>) {
-    return (
-        <React.Fragment>
-            <label>{props.caption}</label>
-            <select value={indexOf(props.values, props.data, props.isEqual)} onChange={
-                e => {
-                    props.setData(props.values[Number(e.currentTarget.value)]);
-                }
-            }>{
-                props.values.map((possibleValue, i) => (
-                    <option value={i}>{props.valueNames[i]}</option>
-                ))
-            }</select>
-        </React.Fragment>
-    )
 }

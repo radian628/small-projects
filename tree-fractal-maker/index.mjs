@@ -2,6 +2,8 @@ import { Draggable } from "../common/draggable.mjs";
 import { drawTree } from "./draw-tree.mjs";
 import { lerp } from "../common/util.mjs";
 
+const doNotReflect = window.location.hash == "#donotreflect";
+
 // canvas and context
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
@@ -117,7 +119,8 @@ function loop() {
         angle1,
         mag1,
         angle2,
-        mag2
+        mag2,
+        reflect: !doNotReflect
     };
 
     // reset canvas

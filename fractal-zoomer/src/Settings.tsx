@@ -1,6 +1,8 @@
 import React, { Dispatch, SetStateAction } from "react"
 import { FractalType } from "./FractalCanvas";
-import { NumberInput, SelectInput } from "./Inputs";
+import { Gradient, GradientInput } from "./GradientInput";
+import { NumberInput } from "./NumberInput";
+import { SelectInput } from "./SelectInput";
 
 type GetPropertiesOfType<T, PropType> = { [P in keyof T]: T[P] extends PropType ? P : never }
 
@@ -33,7 +35,7 @@ export function MandelbrotSettingsMenu(props: FractalPropsType<MandelbrotSetting
     return (
         <React.Fragment>
             <NumberInput 
-                options={{ stepSize: 1, min: 0, max: Infinity }}
+                options={{ stepSize: 1, min: 0, max: Infinity, sensitivity: 0.1 }}
                 data={props.settings.iterations} 
                 setData={setter("iterations")} 
                 caption="Iterations"></NumberInput>
@@ -59,13 +61,13 @@ export function JuliaSettingsMenu(props: FractalPropsType<JuliaSettings>) {
     return (
         <React.Fragment>
             <NumberInput 
-                options={{ stepSize: 1, min: 0, max: Infinity }} 
+                options={{ stepSize: 1, min: 0, max: Infinity, sensitivity: 0.1 }} 
                 data={props.settings.iterations} setData={setter("iterations")} caption="Iterations"></NumberInput>
             <NumberInput 
-                options={{ stepSize: 0.001, min: -Infinity, max: Infinity }} 
+                options={{ stepSize: 0.001, min: -Infinity, max: Infinity, sensitivity: 0.001 }} 
                 data={props.settings.cReal} setData={setter("cReal")} caption="Real part of C"></NumberInput>
             <NumberInput 
-                options={{ stepSize: 0.001, min: -Infinity, max: Infinity }} 
+                options={{ stepSize: 0.001, min: -Infinity, max: Infinity, sensitivity: 0.001 }} 
                 data={props.settings.cImaginary} setData={setter("cImaginary")} caption="Imaginary part of C"></NumberInput>
         </React.Fragment>
     );
@@ -90,13 +92,13 @@ export function DucksSettingsMenu(props: FractalPropsType<DucksSettings>) {
     return (
         <React.Fragment>
             <NumberInput 
-                options={{ stepSize: 1, min: 0, max: Infinity }} 
+                options={{ stepSize: 1, min: 0, max: Infinity, sensitivity: 0.1 }} 
                 data={props.settings.iterations} setData={setter("iterations")} caption="Iterations"></NumberInput>
             <NumberInput 
-                options={{ stepSize: 0.001, min: -Infinity, max: Infinity }} 
+                options={{ stepSize: 0.001, min: -Infinity, max: Infinity, sensitivity: 0.001 }} 
                 data={props.settings.pReal} setData={setter("pReal")} caption="Real part of C"></NumberInput>
             <NumberInput 
-                options={{ stepSize: 0.001, min: -Infinity, max: Infinity }} 
+                options={{ stepSize: 0.001, min: -Infinity, max: Infinity, sensitivity: 0.001 }} 
                 data={props.settings.pImaginary} setData={setter("pImaginary")} caption="Imaginary part of C"></NumberInput>
         </React.Fragment>
     );
@@ -112,8 +114,10 @@ export type FractalSettings = MandelbrotSettings | JuliaSettings | DucksSettings
 
 type SettingsProps = 
     {
-        settings: FractalSettings
+        settings: FractalSettings,
+        gradient: Gradient,
         setSettings: Dispatch<SetStateAction<FractalSettings>>
+        setGradient: Dispatch<SetStateAction<Gradient>>
     };
 
 const DEFAULTS: [MandelbrotSettings, JuliaSettings, DucksSettings] = [
@@ -140,8 +144,10 @@ const DEFAULTS: [MandelbrotSettings, JuliaSettings, DucksSettings] = [
 
 export function Settings(props: SettingsProps) {
     const setter = getObjSetter((settings) => props.setSettings(settings), props.settings);
+
     return (
         <div id="settings">
+            <GradientInput setGradient={props.setGradient} gradient={props.gradient} size={300}></GradientInput>
             <SelectInput 
                 caption={"Fractal Type:"} 
                 data={props.settings} 
@@ -153,7 +159,7 @@ export function Settings(props: SettingsProps) {
                 isEqual={(a, b) => a.fractalType == b.fractalType}
             ></SelectInput>
             <NumberInput 
-                options={{ stepSize: 1, min: 1, max: Infinity }} 
+                options={{ stepSize: 1, min: 1, max: Infinity, sensitivity: 0.025 }} 
                 data={props.settings.sampleCount} setData={setter("sampleCount")} caption="Sample Count"></NumberInput>
             {(() => {
                 switch (props.settings.fractalType) {

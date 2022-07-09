@@ -4,6 +4,7 @@ import './App.css'
 import { FractalCanvas, FractalType } from "./FractalCanvas";
 import { ElementDragger } from './ElementDragger';
 import { FractalSettings, Settings } from './Settings';
+import { Gradient } from './GradientInput';
 
 function App() {
   let [x1, setX1] = useState(-2);
@@ -17,17 +18,45 @@ function App() {
     sampleCount: 1
   });
 
+  const [gradient, setGradient] = useState<Gradient>(
+    // [
+    //     0, 0, 0,
+    //     255, 87, 25,
+    //     255, 233, 133,
+    //     153, 255, 253,
+    //     255, 255, 255,
+    // ]
+    // 0, 0.1, 0.2, 0.3, 1.0
+    [
+      {
+        color: [0, 0, 0], factor: 0
+      },
+      {
+        color: [255, 87, 25], factor: 0.1
+      },
+      {
+        color: [255, 233, 133], factor: 0.2
+      },
+      {
+        color: [153, 255, 253], factor: 0.3
+      },
+      {
+        color: [255, 255, 255], factor: 1.0
+      },
+    ]
+  )
+
   return (
     <div className="App">
 
       <FractalCanvas 
       x1={x1} y1={y1} x2={x2} y2={y2} 
-      settings={settings}></FractalCanvas>
+      settings={settings} gradient={gradient}></FractalCanvas>
 
       <ElementDragger className="fullscreen" 
       x1={x1} setX1={setX1} y1={y1} setY1={setY1} x2={x2} setX2={setX2} y2={y2} setY2={setY2}></ElementDragger>
 
-      <Settings settings={settings} setSettings={setSettings}></Settings>
+      <Settings gradient={gradient} setGradient={setGradient} settings={settings} setSettings={setSettings}></Settings>
     </div>
   );
 }

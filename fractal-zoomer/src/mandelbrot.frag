@@ -17,24 +17,7 @@ uniform uint iterations;
 
 uniform float numberOfSamples;
 
-vec3 getColor(float factor) {
-    float factor2 = factor;
-    uint index = 0u;
-    while (factor >= gradientFactor[index + 1u] - gradientFactor[index]) {
-        index++;
-        factor -= gradientFactor[index] - gradientFactor[index - 1u];
-    }
-
-    return mix(
-        gradient[index],
-        gradient[index + 1u],
-        (factor2 - gradientFactor[index]) / (gradientFactor[index + 1u] - gradientFactor[index])
-    );
-}
-
-float rand(vec2 co){
-    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
-}
+//$FRACTAL_LIB
 
 void main(void) {
     vec3 color = vec3(0.0);
