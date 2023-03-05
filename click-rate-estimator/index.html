@@ -62,7 +62,11 @@
         }
       }
 
-      clicker.onclick = click;
+      if ("ontouchstart" in document.documentElement) {
+        clicker.ontouchstart = click;
+      } else {
+        clicker.onclick = click;
+      }
     </script>
   </body>
 </html>
