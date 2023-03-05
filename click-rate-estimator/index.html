@@ -37,7 +37,7 @@
       function loop() {
         let now = Date.now();
         clicker.innerText = `${clicks} clicks\n${
-          (10 - now + currentTime) / 1000
+          (now - currentTime - 10) / 1000
         } seconds left!`;
         if (now - currentTime > 10000) {
           started = false;
