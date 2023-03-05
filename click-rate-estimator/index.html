@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #clicker {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: white;
+        color: black;
+        font-size: 4em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: monospace;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="clicker">Click anywhere to begin.</div>
+    <script>
+      const clicker = document.getElementById("clicker");
+
+      clicker.oncontextmenu = () => false;
+
+      let started = false;
+      let isUnclickable = false;
+
+      let clicks = 0;
+
+      let currentTime = 0;
+
+      function loop() {
+        let now = Date.now();
+        clicker.innerText = `${clicks} clicks\n${
+          (10 - now + currentTime) / 1000
+        } seconds left!`;
+        if (now - currentTime > 10000) {
+          started = false;
+          clicker.innerText = `Time's up!\nYou got ${clicks} clicks in 10 seconds!`;
+          isUnclickable = true;
+          setTimeout(() => (isUnclickable = false), 1000);
+        } else {
+          requestAnimationFrame(loop);
+        }
+      }
+
+      function click() {
+        if (isUnclickable) return;
+
+        if (started) {
+          clicks += 1;
+        } else {
+          started = true;
+          clicks = 0;
+          currentTime = Date.now();
+          loop();
+        }
+      }
+
+      clicker.onclick = click;
+    </script>
+  </body>
+</html>
