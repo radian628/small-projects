@@ -40,9 +40,12 @@
 
       function loop() {
         let now = Date.now();
-        clicker.innerText = `${clicks} clicks\n${
-          (now - currentTime - 10) / 1000
-        } seconds left!`;
+        clicker.innerHTML = `${clicks} clicks<br>${(
+          (currentTime - now + 10000) /
+          1000
+        )
+          .toString()
+          .padEnd(5, "0")} seconds left!`;
         if (now - currentTime > 10000) {
           started = false;
           clicker.innerText = `Time's up!\nYou got ${clicks} clicks in 10 seconds!`;
